@@ -1,0 +1,866 @@
+exp 1: Data Warehouse Construction a) Real life Problem to be defined for Warehouse Design b) Construction of star schema and snowflake schema c) ETL Operations.
+
+creating dataset for etl
+import pandas as pd
+import numpy as np
+
+data = {
+'Date':pd.date_range(start='2023-01-01', periods=10), 
+'Region': ['Asia', 'Africa', 'Asia', 'Europe', 'Africa', 'Antartica', 'Africa', 'NorthAmerica', 'Asia', 'Europe'], 
+'Product': ['F', 'T', 'A', 'Y2', 'K3', '08', 'T5', '110', 'R3', 'Y1'],
+'Sales':np.random.randint(100, 1000, size=10)
+}
+
+df= pd.DataFrame(data)
+print(df)
+
+
+extract operation:
+
+ex = df[(df['Region'] == 'Asia') & (df['Product'] == 'F')] 
+print (ex)
+
+
+transform operation:
+
+transformed_data = df.groupby(['Region', 'Product']) ['Sales'].sum().reset_index() 
+print("Transformed Data (Total Sales by Region and Product):")
+print(transformed data)
+
+
+load operation:
+
+transformed_data.to_csv('transformed_data.csv', index=False)
+print("\nTransformed data saved to 'transformed data.csv'")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exp 2: Construction of Cubes, OLAP Operations, OLAP Queries
+
+import pandas as pd 
+
+data = { 
+'Region': ['North', 'South', 'East', 'West', 'North', 'South', 'East', 'West'], 
+'Year': [2020, 2020, 2020, 2020, 2021, 2021, 2021, 2021], 
+'Sales': [100, 150, 200, 120, 110, 180, 210, 130] 
+} 
+
+df = pd.DataFrame(data) 
+print('Data: ', df, '\n\n') 
+
+slice_df = df[df['Year'] == 2021] 
+print('Slice Operation: ') 
+print(slice_df, '\n\n') 
+
+dice_df = df[(df['Year']==2021) & (df['Region']=='North')] 
+print('Dice Operation: ') 
+print(dice_df, '\n\n') 
+
+rollup_df = df.groupby(['Region', 'Year']).sum() 
+print('Rollup Operation: ') 
+print(rollup_df, '\n\n') 
+
+drilldown_df = df.groupby(['Region', 'Year']).sum().reset_index() 
+print('Drilldown Operation: ') 
+print(drilldown_df) 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exp 3: Tutorials: a) Solving exercises in Data Exploration b) Solving exercises in Data preprocessing
+
+
+import pandas as pd
+s = pd.Series ([11,28,72,3,5,8]) 
+s
+print(s.index)
+print(s.values)
+
+
+import numpy as np
+X = np.array([11, 28, 72, 3, 5, 8])
+print(X)
+print(s.values)
+print(type(s.values), type(X))
+
+fruits = ['apples', 'oranges', 'cherries', 'pears']
+quantities = [20, 33, 52, 10]
+S = pd.Series (quantities, index=fruits)
+S
+
+S = pd.Series ([20, 33, 52, 10], index=fruits) 
+S2 = pd. Series ([17, 13, 31, 32], index=fruits)
+print (S + S2)
+print ("sum of S: ", sum (S))
+
+
+import pandas as pd
+fruits = ['peaches', 'oranges', 'cherries', 'pears']
+fruit2 = ['respberries', 'oranges', 'cherries', 'pears']
+s = pd.Series ([20,33,52,10], index=fruits)
+s2 pd.Series ([17,13,31,32], index=fruit2)
+print(s+s2)
+print(s['pears'])
+
+
+import math
+print(math.ceil(1.4))
+print(math.ceil(5.2))
+print(math.ceil(9.2))
+print(math.ceil(4.8))
+
+
+import math
+print(math.gcd(16,4))
+print(math.gcd(58,25))
+print(math.gcd(9,27))
+print(math.gcd(45365,4858))
+
+
+import math
+print(math.isnan(56))
+print(math.isnan(+56.555))
+print(math.isnan(math.inf))
+print(math.isnan (float("nan")))
+print(math.isnan (math.nan))
+
+
+import matplotlib.pyplot as plt
+import numpy as np
+plt.plot([1,2,3,4], [1,4,9,16]) 
+plt.title("First Plot")
+plt.xlabel("x label")
+plt.ylabel("label")
+plt.show()
+
+
+import matplotlib.pyplot as plt
+import numpy as np
+plt.figure(figsize=(15,5))
+plt.plot([1,2,3,4], [1,4,9,16]) 
+plt.show()
+
+
+plt.plot([1,2,3,4], [1,4,9,16], "go")
+plt.title("First Plot")
+plt.xlabel("x label")
+plt.ylabel("Y label")
+plt.show()
+
+
+import numpy
+x = numpy.array([[1,2,3], [4,5,6], [7,8,9]])
+print(x.shape)
+print(x.size)
+
+
+a = numpy.array([20,30,40,50,60]) 
+b = numpy.arange(5) 
+c = a-b 
+c
+
+
+numpy.array([1,2,3,4,5])
+avg = x.mean()
+sum = x.sum()
+SX = numpy.sin(x)
+SX
+
+
+from scipy import linalg
+import numpy as np
+two_d_array = np.array([[4,5], [3,2]])
+linalg.det(two_d_array)
+
+
+from scipy import linalg
+import numpy as np
+arr= np.array([[5,4], [6,3]])
+eg_val, eg_vect = linalg.eig (arr)
+print(eg_val)
+print(eg_vect)
+
+
+import pandas as pd
+rdata={
+"city": ["Mumbai", "Pune", "Chennai", "Banglore", "Kolkatta", "Goa"], "rank": [1,2,3,4,5,6],
+"score1": [60,52,37,90,55,70],
+"score2": [72,84,53,78,40,58]
+}
+df=pd.DataFrame (rdata,
+index=pd.Index ([1,2,3,4,5,6], name='number'),
+columns=pd.Index(['city', 'rank', 'score1', 'score2'],
+name='attributes'))
+df
+
+
+bins=[0,32,60,74,86]
+names=['low', 'avg', 'good', 'best']
+df['grade']=pd.cut(df['score2'], bins, labels=names)
+%matplotlib inline
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+plt.style.use('seaborn-white')
+plt.hist(df['grade'], bins=4)
+
+
+import math
+data= [4,6,42, 50, 23, 36, 40,9,55,68,21,30]
+data=np.sort(data)
+print(data)
+b1 = np.zeros((3,4))
+b2 = np.zeros((3,4))
+b3= np.zeros((3,4))
+for i in range(0,16,8):
+k=int(1/3)
+mean=(data[i] +data[i+1] + data[i+2] + data[i+3])/4
+for j in range (4):
+  b1[k][j]=int(mean)
+print("--Mean Bin--\n", b1)
+%matplotlib inline
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+plt.style.use('seaborn-white')
+plt.hist(b1)
+
+
+import math
+import numpy as np
+data= [4,6,42,50,23,36,40,9,55,68,21,30]
+data=np.sort(data)
+print(data)
+b1 = np.zeros((3,4))
+b2 = np.zeros((3,4))
+b3 = np.zeros((3,4))
+for i in range(0,16,8): k=int(1/3)
+mean=(data[i] + data[i+1] + data [i+2] + data[i+3])/4
+for j in range(4):
+  b1 [k,j]=int(mean)
+print("--Mean Bin--\n", b1)
+for i in range(0,12,4):
+  k=int(i/3)
+  for j in range(4):
+    b2[k,j] = data[i+2]
+print("--Median Bin--\n", b2)
+%matplotlib inline
+import matplotlib.pyplot as plt
+import seaborn as sns
+plt.style.use('seaborn-white')
+plt.hist(b2)
+
+
+import math
+import numpy as np
+data= [4,6,42,50,23,36,40,9,55,68,21,30]
+data=np.sort(data)
+print(data)
+b1 = np.zeros((3,4))
+b2 = np.zeros((3,4))
+b3 = np.zeros((3,4))
+for i in range(0,16,8): k=int(1/3)
+mean=(data[i] + data[i+1] + data[i+2] + data[i+3])/4
+for i in range (0,12,4):
+  k=int(1/3)
+  for j in range (4):
+    if (data[i+j]-data[i]) < (data[i+3]-data[i+j]):
+      b3[k,j]=data[i]
+    else:
+       b3[k,j]=data[i+3]
+print("--Bin Boundaries--\n",b3)
+%matplotlib inline
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+plt.style.use('seaborn-white')
+plt.hist(b3)
+
+
+
+Write a python program to declare two series data and also add the index names. Use division operator to divide one series by another. In the output one of the series data must be NaN and another Inf.
+
+import pandas as pd
+import numpy as np
+series1 = pd.Series([10, 0, 30], index=['a', 'b', 'c'])
+series2 = pd.Series [2, 0, 0], index=['a', 'b', 'c'])
+result - series1 / series2
+print(result)
+
+
+
+Write a python program to consider some values as (x,y) co-ordinate values and plot the graph using a line graph. The color of the line graph should be red. 
+
+x_values = [1, 2, 3, 4, 5] 
+y_values = [2, 4, 6, 8, 10]
+plt.plot(x_values, y_values, color='red')
+plt.title('Line Graph')
+plt.xlabel('X-axis')
+plt.ylabel('Y-axis')
+plt.show()
+
+
+
+Consider a list datatype (1D) then reshape it into 2D, 3D matrix using NumPy
+
+import numpy as np
+one_d_list = [1,2,3,4,5,6,7,8,9]
+two_d_matrix = np.reshape(one_d_list, (3,3))
+print("2D matrix:\n", two_d_matrix)
+three_d_matrix = np.reshape(one_d_list, (3,3,1))
+print("3D matrix:\n", three_d_matrix)
+
+
+
+Generate random matrices using NumPy
+
+import numpy as np
+random matrix = np.random.rand(3, 3)
+print("Random Matrix:\n", random_matrix)
+random_int_matrix = np.random.randint(1, 11, size=(4, 4))
+print("Random Integer Matrix:\n", random_int_matrix)
+
+
+
+Find the determinant of a matrix using SciPy
+
+from scipy.linalg import det
+matrix = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]]) 
+determinant = det(matrix)
+print("Determinant of the matrix:", determinant)
+
+
+
+Find eigenvalue and eigenvector of a matrix using SciPy
+
+from scipy.linalg import eig
+matrix = np.array([[4, -2], [1, 1]])
+eigenvalues, eigenvectors = eig(matrix)
+print("Eigenvalues: \n", eigenvalues)
+print("Eigenvectors: \n", eigenvectors)
+
+
+
+
+
+Normalization: 
+
+import pandas as pd
+import matplotlib.pyplot as plt
+data = {
+'Height': [160, 165, 170, 175, 180, 185, 190, 195, 200, 205],
+' Weight': [55, 60, 68, 72, 80, 85, 90, 100, 105, 110]
+}
+df = pd.DataFrame (data)
+df['Height_norm'] = (df['Height'] - df['Height'].min()) / (df['Height'].max() - df['Height'].min())
+df['weight_norm'] = (df['weight'] - df['weight'].min()) / (df['weight'].max() - df['weight'].min())
+plt.figure(figsize=(12, 5))
+plt.subplot(1, 2, 1)
+plt.hist(df['Height_norm'], bins 10, edgecolor='black')
+plt.title('Normalized Height')
+plt.xlabel('Normalized Height')
+plt.ylabel('Frequency')
+plt.subplot(1, 2, 2)
+plt.hist(df['weight_norm'], bins=10, edgecolor='black')
+plt.title('Normalized weight')
+plt.xlabel('Normalized weight')
+plt.ylabel('Frequency')
+plt.tight_layout()
+plt.show()
+
+
+
+
+
+
+
+Standardization:
+
+import pandas as pd
+import matplotlib.pyplot as plt
+data = {
+'Height': [160, 165, 170, 175, 180, 185, 190, 195, 200, 205],
+' Weight': [55, 60, 68, 72, 80, 85, 90, 100, 105, 110]
+}
+df = pd.DataFrame (data)
+df['Height_std'] = (df['Height'] - df['Height'].mean())
+/ df ['Height'].std()
+df['Weight_std'] = (df['Weight'] - df['Weight'].mean())
+/ df['Weight'].std()
+plt.figure(figsize=(12, 5))
+plt.subplot(1, 2, 1)
+plt.hist(df['Height_std'], bins=10, edgecolor='black')
+plt.title('Standardized Height')
+plt.xlabel('Standardized Height')
+plt.ylabel('Frequency')
+plt.subplot(1, 2, 2)
+plt.hist(df['Weight_std'], bins 10, edgecolor='black')
+plt.title('Standardized Weight')
+plt.xlabel('Standardized Weight')
+plt.ylabel('Frequency')
+plt.tight_layout()
+plt.show()
+
+
+
+
+
+
+Binning:
+
+import pandas as pd
+import matplotlib.pyplot as plt
+data = {
+'Height': [160, 165, 170, 175, 180, 185, 190, 195, 200, 205],
+' Weight': [55, 60, 68, 72, 80, 85, 90, 100, 105, 110]
+}
+df = pd.DataFrame (data)
+df ['Weight_binned'] = pd.cut(df['Weight'], bins=3)
+df['Height_binned'] = pd.qcut(df ['Height'], q=3)
+plt.figure(figsize=(12, 5))
+plt.subplot(1, 2, 1)
+df['weight_binned'].value_counts().sort_index().plot(kind='bar')
+plt.title('Binned Weight (Equal-width)')
+plt.xlabel('Weight Bins')
+plt.ylabel('Frequency')
+plt.subplot(1, 2, 2)
+df['Height_binned'].value_counts().sort_index().plot(kind='bar')
+plt.title('Binned Height (Equal-frequency)')
+plt.xlabel('Height Bins')
+plt.ylabel('Frequency')
+plt.tight_layout()
+plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exp 7: Using open source tools Implement Classifiers. 
+
+
+from sklearn.datasets import load_iris 
+from sklearn import tree 
+iris = load_iris() 
+x,y = iris.data, iris.target 
+clf = tree.DecisionTreeClassifier() 
+clf = clf.fit(x,y) 
+tree.plot_tree(clf) 
+
+
+
+from sklearn.datasets import load_iris 
+from sklearn import tree 
+iris = load_iris() 
+x,y = iris.data, iris.target 
+clf = tree.DecisionTreeClassifier(criterion= "entropy") 
+clf = clf.fit(x,y) 
+tree.plot_tree(clf) 
+
+
+from sklearn.datasets import load_iris 
+from sklearn import tree 
+iris = load_iris() 
+x,y = iris.data, iris.target 
+clf = tree.DecisionTreeClassifier(criterion= "log_loss") 
+clf = clf.fit(x,y) 
+tree.plot_tree(clf) 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exp 8: IMPLEMENTATION OF ANY ONE CLUSTERING ALGORITHM (K MEANS)
+
+
+from sklearn.cluster import KMeans 
+from sklearn import datasets 
+import matplotlib.pyplot as plt 
+
+iris = datasets.load_iris() 
+X = iris.data 
+k_values = [1, 3, 5, 7] 
+for k in k_values: 
+    kmeans = KMeans(n_clusters=k, random_state=0) 
+    kmeans.fit(X) 
+    labels = kmeans.labels_ 
+    plt.figure() 
+    plt.scatter(X[:, 0], X[:, 1], c=labels, cmap='viridis') 
+    plt.title(f"K-Means Clustering (k={k})") 
+    plt.xlabel("Sepal Length") 
+    plt.ylabel("Sepal Width") 
+    plt.show() 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exp 9: Implementation of any one association mining algorithm using python language Apriori
+
+
+from itertools import combinations 
+
+from collections import defaultdict 
+
+ 
+
+def apriori(transactions, min_support): 
+
+    item_count = defaultdict(int) 
+
+    for transaction in transactions: 
+
+        for item in transaction: 
+
+            item_count[item] += 1 
+
+     
+
+    # Filter items that meet the min_support threshold 
+
+    large_itemsets = {frozenset([item]) for item, count in item_count.items() if count >= min_support} 
+
+     
+
+    k = 2 
+
+    all_large_itemsets = large_itemsets.copy() 
+
+ 
+
+    while large_itemsets: 
+
+        candidate_itemsets = apriori_gen(large_itemsets, k) 
+
+         
+
+        item_count = defaultdict(int) 
+
+        for transaction in transactions: 
+
+            transaction_set = set(transaction) 
+
+            for candidate in candidate_itemsets: 
+
+                if candidate.issubset(transaction_set): 
+
+                    item_count[candidate] += 1 
+
+         
+
+         
+
+        large_itemsets = {itemset for itemset, count in item_count.items() if count >= min_support} 
+
+         
+
+        all_large_itemsets.update(large_itemsets) 
+
+         
+
+        k += 1 
+
+ 
+
+    return all_large_itemsets 
+
+ 
+
+def apriori_gen(large_itemsets, k): 
+
+    candidates = set() 
+
+    large_list = list(large_itemsets) 
+
+     
+
+    for i in range(len(large_list)): 
+
+        for j in range(i + 1, len(large_list)): 
+
+            # Join sets only if the first k-2 items are the same 
+
+            l1 = list(large_list[i])[:-1] 
+
+            l2 = list(large_list[j])[:-1] 
+
+            if l1 == l2:  # Compare first k-2 items 
+
+                candidate = large_list[i] | large_list[j]  # Union of the two sets 
+
+                if all(frozenset(subset) in large_itemsets for subset in combinations(candidate, k-1)): 
+
+                    candidates.add(candidate) 
+
+    return candidates 
+
+ 
+
+if __name__ == "__main__": 
+
+    transactions = [ 
+
+        ['milk', 'bread', 'cookies'], 
+
+        ['milk', 'diapers', 'beer'], 
+
+        ['milk', 'bread', 'diapers', 'cookies'], 
+
+        ['bread', 'diapers', 'beer'], 
+
+        ['milk', 'bread', 'diapers', 'cookies'], 
+
+    ] 
+
+    min_support = 2 
+
+ 
+
+    large_itemsets = apriori(transactions, min_support) 
+
+    print("Large Itemsets:", large_itemsets) 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exp 10: Implementation of page rank algorithm.
+
+pages.csv:
+source,target
+A,B
+A,C
+B,C
+B,D
+C,A
+C,D
+D,A
+D,B
+D,C
+E,D
+F,E
+F,A
+
+
+
+
+
+
+main.py:
+import csv 
+
+from collections import defaultdict 
+
+ 
+
+class Page: 
+
+    def __init__(self, name): 
+
+        self.name = name 
+
+        self.outlinks = [] 
+
+        self.page_rank = 0.0 
+
+ 
+
+    def add_outlink(self, page): 
+
+        self.outlinks.append(page) 
+
+ 
+
+def compute_pagerank(pages, iterations=100, damping_factor=0.85): 
+
+    num_pages = len(pages) 
+
+     
+
+    # Initialize PageRank 
+
+    for page in pages: 
+
+        page.page_rank = 1.0 / num_pages 
+
+ 
+
+    for _ in range(iterations): 
+
+        new_ranks = {page.name: (1 - damping_factor) / num_pages for page in pages}  # Damping factor 
+
+ 
+
+        # Distribute PageRank from outbound links 
+
+        for page in pages: 
+
+            for outlink in page.outlinks: 
+
+                if len(page.outlinks) > 0:  # Avoid division by zero 
+
+                    new_ranks[outlink.name] += damping_factor * (page.page_rank / len(page.outlinks)) 
+
+ 
+
+        # Update PageRank values 
+
+        for page in pages: 
+
+            page.page_rank = new_ranks[page.name] 
+
+ 
+
+def display_pagerank(pages): 
+
+    for page in pages: 
+
+        print(f"Page: {page.name}, PageRank: {page.page_rank:.4f}") 
+
+ 
+
+def load_dataset(filename): 
+
+    pages = {} 
+
+     
+
+    # Read the CSV file and create Page objects 
+
+    with open(filename, 'r') as file: 
+
+        reader = csv.DictReader(file) 
+
+        for row in reader: 
+
+            source = row['source'] 
+
+            target = row['target'] 
+
+             
+
+            # Create Page objects if they don't exist 
+
+            if source not in pages: 
+
+                pages[source] = Page(source) 
+
+            if target not in pages: 
+
+                pages[target] = Page(target) 
+
+             
+
+            # Add the outlink 
+
+            pages[source].add_outlink(pages[target]) 
+
+     
+
+    return list(pages.values()) 
+
+ 
+
+if __name__ == "__main__": 
+
+    # Load the dataset 
+
+    pages = load_dataset('pages.csv') 
+
+ 
+
+    # Compute PageRank 
+
+    compute_pagerank(pages) 
+
+ 
+
+    # Display results 
+
+    display_pagerank(pages) 
