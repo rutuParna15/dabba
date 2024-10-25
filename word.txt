@@ -1,0 +1,564 @@
+dfs 
+class Graph:
+    def __init__(self):
+        # Dictionary to store graph - key is vertex, value is list of neighbors
+        self.graph = {}
+    
+    def add_edge(self, vertex, neighbor):
+        # Add edges to the graph
+        if vertex not in self.graph:
+            self.graph[vertex] = []
+        self.graph[vertex].append(neighbor)
+
+def dfs_recursive(graph, current_vertex, visited=None):
+    if visited is None:
+        visited = set()
+    
+    # Mark current vertex as visited and print it
+    visited.add(current_vertex)
+    print(f"Visiting vertex: {current_vertex}")
+    
+    # Recur for all adjacent vertices
+    if current_vertex in graph.graph:
+        for neighbor in graph.graph[current_vertex]:
+            if neighbor not in visited:
+                dfs_recursive(graph, neighbor, visited)
+    
+    return visited
+
+def dfs_iterative(graph, start_vertex):
+    # Using a stack for iterative DFS
+    visited = set()
+    stack = [start_vertex]
+    
+    while stack:
+        current_vertex = stack.pop()
+        
+        if current_vertex not in visited:
+            visited.add(current_vertex)
+            print(f"Visiting vertex: {current_vertex}")
+            
+            # Add all unvisited neighbors to stack
+            if current_vertex in graph.graph:
+                for neighbor in reversed(graph.graph[current_vertex]):
+                    if neighbor not in visited:
+                        stack.append(neighbor)
+    
+    return visited
+
+# Example usage
+def example_dfs():
+    # Create a sample graph
+    g = Graph()
+    
+    # Adding edges for the following graph:
+    # 0 --- 1
+    # |     |
+    # 3 --- 2
+    g.add_edge(0, 1)
+    g.add_edge(0, 3)
+    g.add_edge(1, 2)
+    g.add_edge(2, 3)
+    
+    print("Recursive DFS starting from vertex 0:")
+    dfs_recursive(g, 0)
+    
+    print("\nIterative DFS starting from vertex 0:")
+    dfs_iterative(g, 0)
+
+if __name__ == "__main__":
+    example_dfs()
+
+astar 
+
+from heapq import heappush, heappop
+from dataclasses import dataclass, field
+from typing import Dict, List, Tuple
+
+@dataclass(order=True)
+class Node:
+    position: Tuple[int, int] = field(compare=False)
+    f_score: float
+    g_score: float = field(compare=False)
+    parent: Tuple[int, int] = field(default=None, compare=False)
+
+class AStarSearch:
+    def __init__(self, grid: List[List[int]]):
+        self.grid = grid
+        self.rows = len(grid)
+        self.cols = len(grid[0])
+        
+    def get_neighbors(self, position: Tuple[int, int]) -> List[Tuple[int, int]]:
+        """Returns valid neighboring positions."""
+        x, y = position
+        neighbors = []
+        
+        # Check all 4 adjacent cells
+        for dx, dy in [(0, 1), (1, 0), (0, -1), (-1, 0)]:
+            new_x, new_y = x + dx, y + dy
+            
+            # Check if the position is valid and walkable (0 represents walkable path)
+            if (0 <= new_x < self.rows and 
+                0 <= new_y < self.cols and 
+                self.grid[new_x][new_y] == 0):
+                neighbors.append((new_x, new_y))
+                
+        return neighbors
+    
+    def manhattan_distance(self, pos1: Tuple[int, int], pos2: Tuple[int, int]) -> float:
+        """Calculate Manhattan distance between two points."""
+        return abs(pos1[0] - pos2[0]) + abs(pos1[1] - pos2[1])
+    
+    def find_path(self, start: Tuple[int, int], goal: Tuple[int, int]) -> List[Tuple[int, int]]:
+        """Implements A* search to find the shortest path."""
+        # Initialize open and closed sets
+        open_set = []
+        closed_set = set()
+        came_from = {}
+        
+        # Initialize start node
+        start_node = Node(
+            position=start,
+            g_score=0,
+            f_score=self.manhattan_distance(start, goal)
+        )
+        heappush(open_set, start_node)
+        position_to_node = {start: start_node}
+        
+        while open_set:
+            current = heappop(open_set)
+            current_pos = current.position
+            
+            # If we've reached the goal
+            if current_pos == goal:
+                path = []
+                while current_pos in came_from:
+                    path.append(current_pos)
+                    current_pos = came_from[current_pos]
+                path.append(start)
+                return path[::-1]
+            
+            closed_set.add(current_pos)
+            
+            # Check all neighbors
+            for neighbor_pos in self.get_neighbors(current_pos):
+                if neighbor_pos in closed_set:
+                    continue
+                
+                # Calculate tentative g score
+                tentative_g = current.g_score + 1  # Cost of 1 to move to adjacent cell
+                
+                if neighbor_pos not in position_to_node:
+                    neighbor = Node(
+                        position=neighbor_pos,
+                        g_score=float('inf'),
+                        f_score=float('inf')
+                    )
+                    position_to_node[neighbor_pos] = neighbor
+                else:
+                    neighbor = position_to_node[neighbor_pos]
+                
+                if tentative_g >= neighbor.g_score:
+                    continue
+                
+                # This path is better, record it
+                came_from[neighbor_pos] = current_pos
+                neighbor.g_score = tentative_g
+                neighbor.f_score = tentative_g + self.manhattan_distance(neighbor_pos, goal)
+                
+                if neighbor_pos not in [n.position for n in open_set]:
+                    heappush(open_set, neighbor)
+        
+        return []  # No path found
+
+def example_usage():
+    # Create a sample grid (0 represents walkable path, 1 represents obstacles)
+    grid = [
+        [0, 0, 0, 1, 0],
+        [1, 1, 0, 1, 0],
+        [0, 0, 0, 0, 0],
+        [0, 1, 1, 1, 0],
+        [0, 0, 0, 0, 0]
+    ]
+    
+    # Create A* search instance
+    astar = AStarSearch(grid)
+    
+    # Find path from start (0,0) to goal (4,4)
+    start = (0, 0)
+    goal = (4, 4)
+    
+    path = astar.find_path(start, goal)
+    
+    if path:
+        print("Path found:", path)
+        # Visualize the path in the grid
+        for i in range(len(grid)):
+            for j in range(len(grid[0])):
+                if (i, j) == start:
+                    print("S", end=" ")
+                elif (i, j) == goal:
+                    print("G", end=" ")
+                elif (i, j) in path:
+                    print("*", end=" ")
+                else:
+                    print(grid[i][j], end=" ")
+            print()
+    else:
+        print("No path found!")
+
+if __name__ == "__main__":
+    example_usage()
+
+
+tictactoe
+
+import tkinter as tk
+from tkinter import messagebox
+import random
+
+class TicTacToe:
+    def __init__(self, master):
+        self.master = master
+        master.title("Tic Tac Toe")
+
+        # Initialize game mode
+        self.game_mode = None
+        self.current_player = "X"
+        self.board = [[" " for _ in range(3)] for _ in range(3)]
+        self.buttons = []
+
+        # Set a default window size
+        self.master.geometry("300x300")
+
+        # Create Menu
+        self.create_menu()
+
+    def create_menu(self):
+        self.menu = tk.Menu(self.master)
+        self.master.config(menu=self.menu)
+
+        self.game_menu = tk.Menu(self.menu)
+        self.menu.add_cascade(label="Game", menu=self.game_menu)
+        self.game_menu.add_command(label="Human vs Human", command=self.start_human_vs_human)
+        self.game_menu.add_command(label="Human vs Computer", command=self.start_human_vs_computer)
+
+    def start_human_vs_human(self):
+        self.game_mode = 'human_vs_human'
+        self.setup_game()
+
+    def start_human_vs_computer(self):
+        self.game_mode = 'human_vs_computer'
+        self.setup_game()
+
+    def setup_game(self):
+        # Clear buttons list and reset board
+        self.buttons.clear()
+
+        # Remove any existing widgets before setting up the game
+        for widget in self.master.winfo_children():
+            widget.destroy()
+
+        self.current_player = "X"
+        self.board = [[" " for _ in range(3)] for _ in range(3)]
+
+        # Create a 3x3 grid of buttons
+        for i in range(3):
+            row_buttons = []
+            for j in range(3):
+                button = tk.Button(self.master, text=" ", width=10, height=5,
+                                   command=lambda row=i, col=j: self.button_click(row, col))
+                button.grid(row=i, column=j, sticky="nsew")
+                row_buttons.append(button)
+            self.buttons.append(row_buttons)
+
+        # Configure the grid layout to make the buttons expand and fill the window
+        for i in range(3):
+            self.master.grid_rowconfigure(i, weight=1)
+            self.master.grid_columnconfigure(i, weight=1)
+
+    def button_click(self, row, col):
+        if self.board[row][col] == " ":
+            self.board[row][col] = self.current_player
+            self.buttons[row][col].config(text=self.current_player)
+            if self.check_win():
+                self.highlight_winning_row()
+                messagebox.showinfo("Game Over", f"{self.current_player} wins!")
+                self.reset_game()
+            elif self.check_draw():
+                messagebox.showinfo("Game Over", "It's a draw!")
+                self.reset_game()
+            else:
+                if self.game_mode == 'human_vs_computer':
+                    self.switch_player()
+                    self.master.after(500, self.computer_move)  # Add a delay for the AI move
+                else:
+                    self.switch_player()
+
+    def switch_player(self):
+        self.current_player = "O" if self.current_player == "X" else "X"
+
+    def computer_move(self):
+        empty_cells = [(i, j) for i in range(3) for j in range(3) if self.board[i][j] == " "]
+        if empty_cells:
+            row, col = random.choice(empty_cells)
+            self.board[row][col] = "O"
+            self.buttons[row][col].config(text="O")
+            if self.check_win():
+                self.highlight_winning_row()
+                messagebox.showinfo("Game Over", "O wins!")
+                self.reset_game()
+            elif self.check_draw():
+                messagebox.showinfo("Game Over", "It's a draw!")
+                self.reset_game()
+            else:
+                self.switch_player()
+
+    def check_win(self):
+        # Check rows
+        for i in range(3):
+            if self.board[i][0] == self.board[i][1] == self.board[i][2] != " ":
+                self.winning_row = (i, 'row')
+                return True
+        # Check columns
+        for j in range(3):
+            if self.board[0][j] == self.board[1][j] == self.board[2][j] != " ":
+                self.winning_row = (j, 'col')
+                return True
+        # Check diagonals
+        if self.board[0][0] == self.board[1][1] == self.board[2][2] != " ":
+            self.winning_row = (0, 'diag1')
+            return True
+        if self.board[0][2] == self.board[1][1] == self.board[2][0] != " ":
+            self.winning_row = (0, 'diag2')
+            return True
+        return False
+
+    def highlight_winning_row(self):
+        if self.winning_row[1] == 'row':
+            row = self.winning_row[0]
+            for col in range(3):
+                self.buttons[row][col].config(bg='red')
+        elif self.winning_row[1] == 'col':
+            col = self.winning_row[0]
+            for row in range(3):
+                self.buttons[row][col].config(bg='red')
+        elif self.winning_row[1] == 'diag1':
+            for i in range(3):
+                self.buttons[i][i].config(bg='red')
+        elif self.winning_row[1] == 'diag2':
+            for i in range(3):
+                self.buttons[i][2-i].config(bg='red')
+
+    def check_draw(self):
+        for row in self.board:
+            for cell in row:
+                if cell == " ":
+                    return False
+        return True
+
+    def reset_game(self):
+        self.board = [[" " for _ in range(3)] for _ in range(3)]
+        for row in self.buttons:
+            for button in row:
+                button.config(text=" ", bg="SystemButtonFace")
+
+# Run the game
+root = tk.Tk()
+game = TicTacToe(root)
+root.mainloop()
+
+
+hillClimbing
+import random
+
+# Define an example objective function (e.g., maximization problem)
+def objective_function(x):
+    return -(x**2) + 5
+
+# Hill Climbing Algorithm
+def hill_climbing(objective_function, start, step_size, max_iterations):
+    current_position = start
+    current_value = objective_function(current_position)
+
+    for i in range(max_iterations):
+        # Generate neighbor by moving in a random direction
+        neighbor = current_position + random.uniform(-step_size, step_size)
+        neighbor_value = objective_function(neighbor)
+
+        # If the neighbor's value is better, move to the neighbor
+        if neighbor_value > current_value:
+            current_position = neighbor
+            current_value = neighbor_value
+            print(f"Iteration {i+1}: Moved to better position {current_position} with value {current_value}")
+        else:
+            print(f"Iteration {i+1}: No better neighbor found, staying at position {current_position} with value {current_value}")
+
+    return current_position, current_value
+
+# Parameters for hill climbing
+start_position = random.uniform(-10, 10)  # Start at a random position
+step_size = 0.1  # Step size for generating neighbors
+max_iterations = 100  # Maximum number of iterations
+
+# Execute hill climbing
+best_position, best_value = hill_climbing(objective_function, start_position, step_size, max_iterations)
+
+print(f"Best position found: {best_position} with value: {best_value}")
+
+
+FOL 
+
+class Term:
+    """Base class for all terms in first-order logic."""
+    pass
+
+class Constant(Term):
+    """Represents a constant term."""
+    def __init__(self, name):
+        self.name = name
+
+    def __repr__(self):
+        return self.name
+
+class Variable(Term):
+    """Represents a variable term."""
+    def __init__(self, name):
+        self.name = name
+
+    def __repr__(self):
+        return self.name
+
+class Predicate:
+    """Represents a predicate with a name and terms."""
+    def __init__(self, name, *terms):
+        self.name = name
+        self.terms = terms
+
+    def __repr__(self):
+        return f"{self.name}({', '.join(map(str, self.terms))})"
+
+class Not:
+    """Represents a negation of a formula."""
+    def __init__(self, formula):
+        self.formula = formula
+
+    def __repr__(self):
+        return f"¬{self.formula}"
+
+class And:
+    """Represents a conjunction of formulas."""
+    def __init__(self, *formulas):
+        self.formulas = formulas
+
+    def __repr__(self):
+        return f"({' ∧ '.join(map(str, self.formulas))})"
+
+class Or:
+    """Represents a disjunction of formulas."""
+    def __init__(self, *formulas):
+        self.formulas = formulas
+
+    def __repr__(self):
+        return f"({' ∨ '.join(map(str, self.formulas))})"
+
+class Implication:
+    """Represents an implication between two formulas."""
+    def __init__(self, premise, conclusion):
+        self.premise = premise
+        self.conclusion = conclusion
+
+    def __repr__(self):
+        return f"({self.premise} → {self.conclusion})"
+
+# Example usage
+if __name__ == "__main__":
+    # Create constants and variables
+    a = Constant("a")
+    b = Constant("b")
+    x = Variable("x")
+
+    # Create predicates
+    P = Predicate("P", a)
+    Q = Predicate("Q", b)
+
+    # Create logical expressions
+    expression1 = And(P, Not(Q))
+    expression2 = Implication(expression1, Predicate("R", x))
+
+    # Print the expressions
+    print(expression1)  # Output: (P(a) ∧ ¬Q(b))
+    print(expression2)  # Output: ((P(a) ∧ ¬Q(b)) → R(x))
+
+
+Bayesian
+class Node:
+    def __init__(self, name, probabilities=None):
+        self.name = name
+        self.probabilities = probabilities or {}
+        self.children = []
+        self.parents = []
+
+    def add_child(self, child_node):
+        self.children.append(child_node)
+        child_node.parents.append(self)
+
+    def get_probability(self, evidence):
+        # Base case: if there are no parents, return the prior probability
+        if not self.parents:
+            return self.probabilities.get('True', 0)
+
+        # Calculate the joint probability based on evidence
+        prob = 1.0
+        for parent in self.parents:
+            if parent.name in evidence:
+                prob *= parent.probabilities.get(evidence[parent.name], 0)
+            else:
+                prob *= parent.probabilities.get('True', 0)
+        return prob * self.probabilities.get('True', 0)
+
+
+def calculate_joint_probability(nodes, evidence):
+    joint_prob = 1.0
+    for node in nodes:
+        prob = node.get_probability(evidence)
+        joint_prob *= prob
+    return joint_prob
+
+
+# Define the nodes
+rain = Node("Rain", {'True': 0.2, 'False': 0.8})  # P(Rain)
+accident = Node("Accident", {'True': 0.3, 'False': 0.7})  # P(Accident)
+
+# Define conditional probabilities for Traffic given Rain and Accident
+traffic = Node("Traffic", {
+    'True': 0.9,  # P(Traffic | Rain=False, Accident=False)
+    'False': 0.1
+})
+
+# Define the conditional probabilities table for Traffic
+def traffic_probability(evidence):
+    if evidence.get('Rain') == 'True' and evidence.get('Accident') == 'True':
+        return 0.9  # P(Traffic=True | Rain=True, Accident=True)
+    if evidence.get('Rain') == 'True' and evidence.get('Accident') == 'False':
+        return 0.8  # P(Traffic=True | Rain=True, Accident=False)
+    if evidence.get('Rain') == 'False' and evidence.get('Accident') == 'True':
+        return 0.7  # P(Traffic=True | Rain=False, Accident=True)
+    return 0.1  # P(Traffic=False | Rain=False, Accident=False)
+
+# Add dependencies
+rain.add_child(traffic)
+accident.add_child(traffic)
+
+# Example Evidence
+evidence = {'Rain': 'True', 'Accident': 'False'}
+
+# Calculate the joint probability
+joint_probability = calculate_joint_probability([rain, accident, traffic], evidence)
+
+print("Joint Probability of Evidence (Rain=True, Accident=False):", joint_probability)
+
+# Calculate marginal probability P(Traffic=True | Rain=True, Accident=False)
+prob_traffic_true = traffic_probability(evidence)
+
+print("Probability of Traffic being congested given Rain=True and Accident=False:", prob_traffic_true)
