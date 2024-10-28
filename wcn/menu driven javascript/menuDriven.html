@@ -1,0 +1,87 @@
+<!-- run using live server OR type localhost:5500 on browser -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Menu Driven Program</title>
+  </head>
+  <body style="background-color: rgb(255, 202, 164);">
+    <div class="container" >
+      <h1>Menu Driven Program</h1>
+      <h2>Rupeshree Acharya</h2>
+      <h2>122A9040</h2>
+      <h2> B2 AIML</h2>
+      <div class="menu">
+        <button onclick="findGreatest()">
+          Find Greatest Among Three Numbers
+        </button>
+        <button onclick="displayEvenNumbers()">
+          Display Even Numbers Less Than 20
+        </button>
+        <button onclick="calculateArea()">Calculate Area of a Triangle</button>
+        <button onclick="checkLeapYear()">Check if Year is a Leap Year</button>
+        <button onclick="displayTable()">Display Table of a Number</button>
+      </div>
+      <div class="output" id="output"></div>
+    </div>
+
+    <script>
+      function findGreatest() {
+        let num1 = prompt("Enter the first number:");
+        let num2 = prompt("Enter the second number:");
+        let num3 = prompt("Enter the third number:");
+
+        let greatest = Math.max(num1, num2, num3);
+        document.getElementById(
+          "output"
+        ).innerHTML = `The greatest number is ${greatest}.`;
+      }
+
+      function displayEvenNumbers() {
+        let evenNumbers = [];
+        for (let i = 1; i < 20; i++) {
+          if (i % 2 === 0) {
+            evenNumbers.push(i);
+          }
+        }
+        document.getElementById(
+          "output"
+        ).innerHTML = `Even numbers less than 20: ${evenNumbers.join(", ")}.`;
+      }
+
+      function calculateArea() {
+        let base = prompt("Enter the base of the triangle:");
+        let height = prompt("Enter the height of the triangle:");
+
+        let area = (base * height) / 2;
+        document.getElementById(
+          "output"
+        ).innerHTML = `The area of the triangle is ${area}.`;
+      }
+
+      function checkLeapYear() {
+        let year = prompt("Enter the year:");
+
+        let isLeapYear =
+          (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+        document.getElementById("output").innerHTML = `${year} is ${
+          isLeapYear ? "" : "not "
+        }a leap year.`;
+      }
+
+      function displayTable() {
+        let number = prompt("Enter a number:");
+        let table = "";
+
+        for (let i = 1; i <= 10; i++) {
+          table += `${number} x ${i} = ${number * i}<br>`;
+        }
+        document.getElementById(
+          "output"
+        ).innerHTML = `Table of ${number}:<br>${table}`;
+      }
+    </script>
+  </body>
+</html>

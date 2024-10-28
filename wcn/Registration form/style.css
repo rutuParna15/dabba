@@ -1,0 +1,85 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #EEEDEB;
+}
+
+.container {
+    width: 80%;
+    margin: auto;
+    padding: 20px;
+    background-color: #E0CCBE;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+header {
+    text-align: center;
+    border-bottom: 2px solid #4e7998;
+    padding-bottom: 10px;
+}
+
+header .logo {
+    width: 80px;
+}
+
+form {
+    margin-top: 20px;
+}
+
+form h2 {
+    text-align: center;
+}
+
+form label {
+    display: inline-block;
+    width: 150px;
+    margin-top: 10px;
+}
+
+form input,
+form select {
+    width: 300px;
+    padding: 5px;
+    margin-top: 10px;
+}
+
+form input[type="radio"],
+form input[type="checkbox"] {
+    width: auto;
+}
+
+form button {
+    display: block;
+    width: 100px;
+    margin: 20px auto;
+    padding: 10px;
+    background-color: #4e7998;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+form button:hover {
+    background-color: #2f5470;
+}
+
+.iframe {
+    width: 100%;
+    height: 200px;
+    margin-top: 20px;
+    border: none;
+}
+
+footer {
+    text-align: center;
+    margin-top: 20px;
+    background-color: #203b4f;
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+}

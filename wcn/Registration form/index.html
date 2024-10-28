@@ -1,0 +1,98 @@
+<!-- localhost -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admission Enquiry Registration</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <img src="sies_gst_logo.jpg" alt="SIES Logo" class="logo">
+            <h1>SIES Graduate School of Technology</h1>
+            <p>Sri Chandrasekarendra Saraswathi Vidyapuram, Plot IC-E, Sector V, Nerul, Navi Mumbai 400706.<br>
+                Phone No.(91) 6108 2402 / 6108 2417, Website:www.siesgst.edu.in</p>
+        </header>
+        
+        <form id="admissionForm">
+            <h2>Admission Enquiry Registration</h2>
+            <p>General Instructions: <br>1.<br>2.</p>
+            
+            <label for="firstName">Name:</label>
+            <input type="text" id="firstName" name="firstName" placeholder="First Name">
+            <input type="text" id="middleName" name="middleName" placeholder="Middle Name">
+            <input type="text" id="lastName" name="lastName" placeholder="Last Name"><br>
+
+            <label for="address">Address:</label>
+            <input type="text" id="address" name="address"><br>
+
+            <label for="city">City:</label>
+            <select id="city" name="city">
+                <option value="">Select City</option>
+                <option value="">Mumbai</option>
+                <option value="">Pune</option>
+                <option value="">Nagpur</option>
+            </select>
+            
+            <label for="state">State:</label>
+            <select id="state" name="state">
+                <option value="">Select State</option>
+                <!-- Add more options as needed -->
+            </select>
+            
+            <label for="pincode">Pincode:</label>
+            <input type="number" id="pincode" name="pincode"><br>
+
+            <label for="email">Email ID:</label>
+            <input type="email" id="email" name="email"><br>
+
+            <label for="mobileNo">Mobile No.:</label>
+            <input type="number" id="mobileNo" name="mobileNo"><br>
+
+            <label for="aadhaar">Aadhaar Card No.:</label>
+            <input type="text" id="aadhaar" name="aadhaar"><br>
+
+            <label>Gender:</label>
+            <input type="radio" id="male" name="gender" value="Male">
+            <label for="male">Male</label>
+            <input type="radio" id="female" name="gender" value="Female">
+            <label for="female">Female</label><br>
+
+            <label for="dob">Date of Birth:</label>
+            <input type="date" id="dob" name="dob"><br>
+
+            <label for="branch">Choice of Branch:</label>
+            <input type="checkbox" id="branch1" name="branch" value="Branch1">
+            <label for="branch1">Branch 1</label>
+            <input type="checkbox" id="branch2" name="branch" value="Branch2">
+            <label for="branch2">Branch 2</label><br>
+
+            <label for="cetScoreCard">Upload CET Score Card:</label>
+            <input type="file" id="cetScoreCard" name="cetScoreCard"><br>
+
+            <label for="username">Choose Username:</label>
+            <input type="text" id="username" name="username"><br>
+
+            <label for="password">Enter Password:</label>
+            <input type="password" id="password" name="password"><br>
+
+            <label for="retypePassword">Retype Password:</label>
+            <input type="password" id="retypePassword" name="retypePassword"><br>
+
+            <button type="button" onclick="validateForm()">Submit</button>
+        </form>
+
+        <iframe src="newimg.png" class="iframe"></iframe>
+        <iframe src="runneru.png" class="iframe"></iframe>
+
+        <footer>
+            Designed by Rutuparna Kolte & 122A9042.
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
