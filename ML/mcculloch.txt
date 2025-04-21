@@ -1,0 +1,78 @@
+def multiplyInputWeight(a, w):
+    if len(w) != len(a):
+        print("LENGTH OF INPUTS NOT MATCH")
+        return None
+    sum = 0
+    for i in range(len(w)):
+        sum += w[i] * a[i]
+    return sum
+
+def mpNeuralNetwork(a, w, yThreshold):
+    sum = multiplyInputWeight(a, w)
+    if sum is not None:
+        if sum > yThreshold:
+           return 1
+        else:
+          return 0
+
+# b = [1, 0, 1, 0, 1, 1, 0, 1, 0]
+# w2 = [0.1, 0.05, 0.25, 0.7, 0.8, 0.15, 0.05, 0.15, 0.1]
+# yThreshold = 1
+
+# mpNeuralNetwork(b, w2, yThreshold)
+
+
+def andGate(a, w, yThreshold):
+    result = mpNeuralNetwork(a, w, yThreshold)
+    print(f"AND Gate Output for input {a}: {result}")
+
+def orGate(a, w, yThreshold):
+    result = mpNeuralNetwork(a, w, yThreshold)
+    print(f"OR Gate Output for input {a}: {result}")
+
+input1 = [0, 0]
+input2 = [0, 1]
+input3 = [1, 0]
+input4 = [1, 1]
+
+
+and_weights = [0.5, 0.7]
+andThreshold = 1
+print("AND Gate Test:")
+andGate(input1, and_weights, andThreshold)
+andGate(input2, and_weights, andThreshold)
+andGate(input3, and_weights, andThreshold)
+andGate(input4, and_weights, andThreshold)
+
+or_weights = [0.7, 0.7]
+orThreshold = 0.5
+print("\nOR Gate Test:")
+orGate(input1, or_weights, orThreshold)
+orGate(input2, or_weights, orThreshold)
+orGate(input3, or_weights, orThreshold)
+orGate(input4, or_weights, orThreshold)
+
+
+#--------------------------------------------------------------------------------------------------------------------------
+
+import numpy as np
+
+def mcculloch_pitts_model(inputs, weights, threshold):
+    """Implements the McCulloch-Pitts neuron model."""
+    weighted_sum = np.dot(inputs, weights)
+    return 1 if weighted_sum >= threshold else 0
+
+# Linearly Separable Dataset (Example: A custom classification)
+ls_inputs = np.array([[1, 2], [2, 3], [3, 1], [4, 5], [5, 6], [6, 2]])  # Example inputs
+ls_weights = np.array([1, 1])  # Weights for linear separation
+ls_threshold = 4  # Example threshold
+
+print("Linearly Separable Dataset Implementation using McCulloch-Pitts Model:")
+for inp in ls_inputs:
+    output = mcculloch_pitts_model(inp, ls_weights, ls_threshold)
+    print(f"Input: {inp} -> Output: {output}")
+
+# To run on Google Colab:
+# 1. Upload this script to Google Drive or Colab.
+# 2. Run the script in a Colab cell using:
+# !python script_name.py

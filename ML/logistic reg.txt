@@ -1,0 +1,223 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+
+# Step 1: Load your dataset from a CSV file
+# Replace 'your_dataset.csv' with the path to your CSV file
+df = pd.read_csv('/content/insurance_data.csv')
+
+# Display the first few rows of the dataset
+print(df.head())
+
+# Step 2: Check the column names and ensure they match your dataset
+# Replace 'age' and 'bought_insurance' with the actual column names in your dataset
+X = df[['age']]  # Feature (independent variable)
+y = df['bought_insurance']  # Target (dependent variable)
+
+# Step 3: Visualize the data
+plt.figure(figsize=(8, 6))
+sns.scatterplot(x='age', y='bought_insurance', data=df)
+plt.title('Age vs Bought Insurance')
+plt.xlabel('Age')
+plt.ylabel('Bought Insurance')
+plt.show()
+
+# Step 4: Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Step 5: Initialize and train the logistic regression model
+model = LogisticRegression()
+model.fit(X_train, y_train)
+
+# Step 6: Make predictions on the test set
+y_pred = model.predict(X_test)
+
+# Step 7: Evaluate the model
+print("Accuracy:", accuracy_score(y_test, y_pred))
+print("Confusion Matrix:\n", confusion_matrix(y_test, y_pred))
+print("Classification Report:\n", classification_report(y_test, y_pred))
+
+# Step 8: Visualize the decision boundary
+plt.figure(figsize=(8, 6))
+sns.scatterplot(x='age', y='bought_insurance', data=df, hue='bought_insurance')
+plt.title('Age vs Bought Insurance with Decision Boundary')
+plt.xlabel('Age')
+plt.ylabel('Bought Insurance')
+
+# Plot the logistic regression curve
+ages = np.linspace(df['age'].min(), df['age'].max(), 100)
+probabilities = model.predict_proba(ages.reshape(-1, 1))[:, 1]
+plt.plot(ages, probabilities, color='red', label='Logistic Regression Curve')
+
+plt.legend()
+plt.show()
+
+#--------------ionosphere below-----------
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+from sklearn.datasets import fetch_openml
+
+# Load Ionosphere dataset from sklearn
+ionosphere = fetch_openml(name='ionosphere', version=1)
+
+# Load your insurance dataset (replace 'your_insurance_data.csv' with your file path)
+insurance_df = pd.read_csv('/content/insurance_data.csv')
+
+# Prepare the insurance dataset
+X_insurance = insurance_df[['age']]  # Feature
+y_insurance = insurance_df['bought_insurance']  # Target (Binary: 0 or 1)
+
+# Prepare the ionosphere dataset
+X_ionosphere = ionosphere.data
+y_ionosphere = (ionosphere.target == 'g').astype(int)  # Convert to binary (0 or 1)
+
+# Function to plot confusion matrix
+def plot_confusion_matrix(y_true, y_pred, dataset_name):
+    cm = confusion_matrix(y_true, y_pred)
+    plt.figure(figsize=(5, 4))
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=np.unique(y_true), yticklabels=np.unique(y_true))
+    plt.xlabel("Predicted Label")
+    plt.ylabel("True Label")
+    plt.title(f"Confusion Matrix for {dataset_name}")
+    plt.show()
+
+# Function to train and evaluate logistic regression for binary classification
+def logistic_regression_binary(X, y, dataset_name):
+    # Split the data into training and testing sets
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    # Initialize the model
+    model = LogisticRegression()
+
+    # Train the model
+    model.fit(X_train, y_train)
+
+    # Make predictions
+    y_pred = model.predict(X_test)
+
+    # Evaluate the model
+    print(f"Results for {dataset_name}:")
+    print("Accuracy:", accuracy_score(y_test, y_pred))
+    print("Confusion Matrix:\n", confusion_matrix(y_test, y_pred))
+    print("Classification Report:\n", classification_report(y_test, y_pred))
+    print("\n" + "="*50 + "\n")
+
+    # Plot the confusion matrix
+    plot_confusion_matrix(y_test, y_pred, dataset_name)
+
+    # If dataset is 1D (like insurance age), plot decision boundary
+    if dataset_name == "Insurance Dataset":
+        plt.figure(figsize=(6, 4))
+        plt.scatter(X_train, y_train, label="Train Data", alpha=0.7)
+        plt.scatter(X_test, y_test, label="Test Data", alpha=0.7, marker='x')
+
+        # Plot decision boundary
+        x_vals = np.linspace(X.min(), X.max(), 100).reshape(-1, 1)
+        y_vals = model.predict_proba(x_vals)[:, 1]
+        plt.plot(x_vals, y_vals, color="red", label="Decision Boundary")
+
+        plt.xlabel("Age")
+        plt.ylabel("Bought Insurance Probability")
+        plt.title("Logistic Regression Decision Boundary")
+        plt.legend()
+        plt.show()
+
+# Binary Classification
+logistic_regression_binary(X_insurance, y_insurance, "Insurance Dataset")
+logistic_regression_binary(X_ionosphere, y_ionosphere, "Ionosphere Dataset")
+
+# Plot histogram of insurance dataset feature
+plt.figure(figsize=(6, 4))
+sns.histplot(insurance_df['age'], bins=20, kde=True)
+plt.xlabel("Age")
+plt.ylabel("Frequency")
+plt.title("Distribution of Age in Insurance Dataset")
+plt.show()
+
+
+#------------------iris, wine dataset --------------------
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+from sklearn.datasets import load_iris, load_wine
+
+# Load datasets from sklearn
+iris = load_iris()
+wine = load_wine()
+
+# Prepare the Iris dataset
+X_iris = iris.data
+y_iris = iris.target
+
+# Prepare the Wine dataset
+X_wine = wine.data
+y_wine = wine.target
+
+# Function to plot confusion matrix
+def plot_confusion_matrix(y_true, y_pred, dataset_name):
+    cm = confusion_matrix(y_true, y_pred)
+    plt.figure(figsize=(5, 4))
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=np.unique(y_true), yticklabels=np.unique(y_true))
+    plt.xlabel("Predicted Label")
+    plt.ylabel("True Label")
+    plt.title(f"Confusion Matrix for {dataset_name}")
+    plt.show()
+
+# Function to train and evaluate logistic regression for multiclass classification
+def logistic_regression_multiclass(X, y, dataset_name):
+    # Split the data into training and testing sets
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    # Initialize the model
+    model = LogisticRegression(multi_class='multinomial', solver='lbfgs', max_iter=200)
+
+    # Train the model
+    model.fit(X_train, y_train)
+
+    # Make predictions
+    y_pred = model.predict(X_test)
+
+    # Evaluate the model
+    print(f"Results for {dataset_name}:")
+    print("Accuracy:", accuracy_score(y_test, y_pred))
+    print("Confusion Matrix:\n", confusion_matrix(y_test, y_pred))
+    print("Classification Report:\n", classification_report(y_test, y_pred))
+    print("\n" + "="*50 + "\n")
+
+    # Plot the confusion matrix
+    plot_confusion_matrix(y_test, y_pred, dataset_name)
+
+# Multiclass Classification
+logistic_regression_multiclass(X_iris, y_iris, "Iris Dataset")
+logistic_regression_multiclass(X_wine, y_wine, "Wine Dataset")
+
+# Plot histograms for dataset distributions
+plt.figure(figsize=(12, 5))
+plt.subplot(1, 2, 1)
+sns.histplot(y_iris, bins=3, kde=False)
+plt.xlabel("Iris Classes")
+plt.ylabel("Count")
+plt.title("Distribution of Classes in Iris Dataset")
+
+plt.subplot(1, 2, 2)
+sns.histplot(y_wine, bins=3, kde=False)
+plt.xlabel("Wine Classes")
+plt.ylabel("Count")
+plt.title("Distribution of Classes in Wine Dataset")
+
+plt.show()

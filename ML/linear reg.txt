@@ -1,0 +1,113 @@
+from google.colab import files
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error, r2_score
+
+# Step 1: Upload the dataset from your local desktop
+uploaded = files.upload()  # Upload file through Colab interface
+
+# Step 2: Load the dataset into pandas dataframe
+file_name = next(iter(uploaded))  # Get the name of the uploaded file
+df = pd.read_csv(file_name)
+
+# Step 3: Check if the 'LotArea' and 'SalePrice' columns exist in the dataset
+if 'LotArea' not in df.columns or 'SalePrice' not in df.columns:
+    raise ValueError("'LotArea' or 'SalePrice' column is missing from the dataset.")
+
+# Step 4: Select relevant columns and clean data
+df = df[['LotArea', 'SalePrice']]
+
+# Drop rows with missing values
+df = df.dropna(subset=['LotArea', 'SalePrice'])
+
+# Step 5: Split data into features (X) and target (y)
+X = df[['LotArea']]
+y = df['SalePrice']
+
+# Step 6: Split the data into training and testing sets (80% training, 20% testing)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Step 7: Initialize and train the linear regression model
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+# Step 8: Make predictions on the test set
+y_pred = model.predict(X_test)
+
+# Step 9: Evaluate the model's performance
+mse = mean_squared_error(y_test, y_pred)
+rmse = np.sqrt(mse)
+r2 = r2_score(y_test, y_pred)
+
+print(f"Mean Squared Error: {mse}")
+print(f"Root Mean Squared Error: {rmse}")
+print(f"R-squared: {r2}")
+
+# Step 10: Visualize the results
+plt.figure(figsize=(10,6))
+plt.scatter(X_test, y_test, color='blue', label='Actual data')
+plt.plot(X_test, y_pred, color='red', linewidth=2, label='Regression line')
+plt.title('Linear Regression: LotArea vs SalePrice')
+plt.xlabel('LotArea')
+plt.ylabel('SalePrice')
+plt.legend()
+plt.show()
+
+
+#-----------------Another code------------
+
+from google.colab import files
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error, r2_score
+
+# Step 1: Upload the dataset from your local desktop
+uploaded = files.upload()  # Upload file through Colab interface
+
+# Step 2: Load the dataset into pandas dataframe
+file_name = next(iter(uploaded))  # Get the name of the uploaded file
+df = pd.read_csv(file_name)
+
+# Step 3: Check if the required columns exist
+required_columns = ['LotArea', 'SalePrice', 'GarageArea', 'GarageCars']
+if not all(col in df.columns for col in required_columns):
+    raise ValueError(f"One or more of the required columns are missing: {required_columns}")
+
+# Step 4: Select the relevant features for the multiple regression model
+df = df[['LotArea', 'SalePrice', 'GarageArea', 'GarageCars']]
+
+# Step 5: Drop rows with missing values in the relevant columns
+df = df.dropna(subset=required_columns)
+
+# Step 6: Define a function to plot regression lines for each feature vs SalePrice
+def plot_regression_line(x, y, xlabel, ylabel, title):
+    # Reshape x to be a 2D array for the model
+    x = x.values.reshape(-1, 1)
+
+    # Train the linear regression model
+    model = LinearRegression()
+    model.fit(x, y)
+
+    # Predict using the model
+    y_pred = model.predict(x)
+
+    # Plot the actual data and regression line
+    plt.figure(figsize=(10, 6))
+    plt.scatter(x, y, color='blue', label='Actual data')
+    plt.plot(x, y_pred, color='red', linewidth=2, label='Regression line')
+    plt.title(title)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.legend()
+    plt.show()
+
+# Step 7: Plot regression line for each feature vs SalePrice
+plot_regression_line(df['LotArea'], df['SalePrice'], 'LotArea', 'SalePrice', 'LotArea vs SalePrice')
+plot_regression_line(df['GarageArea'], df['SalePrice'], 'GarageArea', 'SalePrice', 'GarageArea vs SalePrice')
+plot_regression_line(df['GarageCars'], df['SalePrice'], 'GarageCars', 'SalePrice', 'GarageCars vs SalePrice')

@@ -1,0 +1,141 @@
+#-----iris------
+
+#for Iris Dataset
+
+import numpy as np
+import tensorflow as tf
+from tensorflow import keras
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler, LabelEncoder
+from sklearn.datasets import load_iris
+
+# Load the Iris dataset
+iris = load_iris()
+X = iris.data
+y = iris.target
+
+# Encode labels
+y = LabelEncoder().fit_transform(y)
+
+# Train-test split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# Standardize data
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+# Define a function to build MLP models
+def build_mlp(hidden_layers, neurons_per_layer, optimizer):
+    model = keras.Sequential()
+    model.add(keras.layers.InputLayer(input_shape=(X_train.shape[1],)))
+    for neurons in neurons_per_layer[:hidden_layers]:
+        model.add(keras.layers.Dense(neurons, activation='relu'))
+    model.add(keras.layers.Dense(3, activation='softmax'))
+    model.compile(optimizer=optimizer, loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+    return model
+
+# Experiment with different hidden layers, neurons, and optimizers
+hidden_layers_options = [2, 3, 4]
+neurons_options = [[512, 256], [512, 256, 128], [512, 256, 128, 64]]
+optimizers = ['sgd', 'adam', 'adagrad', 'rmsprop']
+
+history_dict = {}
+
+for hidden_layers, neurons in zip(hidden_layers_options, neurons_options):
+    for opt in optimizers:
+        print(f"Training model with {hidden_layers} hidden layers, optimizer={opt}")
+        model = build_mlp(hidden_layers, neurons, opt)
+        history = model.fit(X_train, y_train, epochs=20, batch_size=16, verbose=0, validation_data=(X_test, y_test))
+        test_loss, test_acc = model.evaluate(X_test, y_test, verbose=0)
+        print(f"Test accuracy: {test_acc:.4f}\n")
+
+        # Store history for visualization
+        history_dict[f"{hidden_layers}_layers_{opt}"] = history
+
+# Plot training accuracy for different models
+plt.figure(figsize=(12, 6))
+for key, history in history_dict.items():
+    plt.plot(history.history['accuracy'], label=f"Train {key}")
+    plt.plot(history.history['val_accuracy'], linestyle='dashed', label=f"Val {key}")
+plt.xlabel('Epochs')
+plt.ylabel('Accuracy')
+plt.title('Training and Validation Accuracy')
+plt.legend()
+plt.show()
+
+
+#--------inosphere------------
+
+#for Ionosphere Dataset
+
+import numpy as np
+import tensorflow as tf
+from tensorflow import keras
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler, LabelEncoder
+import pandas as pd
+import urllib.request
+
+# Download dataset in Colab
+url = "https://archive.ics.uci.edu/ml/machine-learning-databases/ionosphere/ionosphere.data"
+filename = "ionosphere.data"
+urllib.request.urlretrieve(url, filename)
+
+# Load the Ionosphere dataset
+ionosphere = pd.read_csv(filename, header=None)
+X = ionosphere.iloc[:, :-1].values
+y = ionosphere.iloc[:, -1].values
+
+# Encode labels
+y = np.where(y == 'g', 1, 0)
+
+# Train-test split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# Standardize data
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+# Define a function to build MLP models
+def build_mlp(hidden_layers, neurons_per_layer, optimizer):
+    model = keras.Sequential()
+    model.add(keras.layers.InputLayer(input_shape=(X_train.shape[1],)))
+    for neurons in neurons_per_layer[:hidden_layers]:
+        model.add(keras.layers.Dense(neurons, activation='relu'))
+    model.add(keras.layers.Dense(1, activation='sigmoid'))
+    model.compile(optimizer=optimizer, loss='binary_crossentropy', metrics=['accuracy'])
+    return model
+
+# Experiment with different hidden layers, neurons, and optimizers
+hidden_layers_options = [2, 3, 4]
+neurons_options = [[512, 256], [512, 256, 128], [512, 256, 128, 64]]
+optimizers = ['sgd', 'adam', 'adagrad', 'rmsprop']
+
+history_dict = {}
+
+for hidden_layers, neurons in zip(hidden_layers_options, neurons_options):
+    for opt in optimizers:
+        print(f"Training model with {hidden_layers} hidden layers, optimizer={opt}")
+        model = build_mlp(hidden_layers, neurons, opt)
+        history = model.fit(X_train, y_train, epochs=20, batch_size=16, verbose=0, validation_data=(X_test, y_test))
+        test_loss, test_acc = model.evaluate(X_test, y_test, verbose=0)
+        print(f"Test accuracy: {test_acc:.4f}\n")
+
+        # Store history for visualization
+        history_dict[f"{hidden_layers}_layers_{opt}"] = history
+
+# Plot training accuracy for different models
+plt.figure(figsize=(12, 6))
+for key, history in history_dict.items():
+    plt.plot(history.history['accuracy'], label=f"Train {key}")
+    plt.plot(history.history['val_accuracy'], linestyle='dashed', label=f"Val {key}")
+plt.xlabel('Epochs')
+plt.ylabel('Accuracy')
+plt.title('Training and Validation Accuracy')
+plt.legend()
+plt.show()
+

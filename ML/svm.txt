@@ -1,0 +1,177 @@
+ **1) Implement SVM classifier to obtain the following accuracy:
+ On Iris dataset: (a) kernel=linear (b) kernel=poly, (c) kernel=rbf, (d) kernel=sigmoid;**
+**On Ionosphere dataset: (a) kernel=linear (b) kernel=poly, (c) kernel=rbf, (d) kernel=sigmoid.**
+**Use 70% training and 30% test set.**
+
+# Import required libraries
+from sklearn import datasets
+from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score
+from sklearn.preprocessing import StandardScaler
+
+# Load the Iris dataset
+iris = datasets.load_iris()
+X_iris = iris.data
+y_iris = iris.target
+
+# Split the data into 70% training and 30% testing
+X_train_iris, X_test_iris, y_train_iris, y_test_iris = train_test_split(X_iris, y_iris, test_size=0.3, random_state=42)
+
+# Scale the features
+scaler = StandardScaler()
+X_train_iris = scaler.fit_transform(X_train_iris)
+X_test_iris = scaler.transform(X_test_iris)
+
+# List of kernels to evaluate
+kernels = ['linear', 'poly', 'rbf', 'sigmoid']
+
+# Iterate through different kernels and train the SVM model
+for kernel in kernels:
+    print(f"\nTraining with {kernel} kernel...")
+
+    # Hyperparameter tuning for 'sigmoid' kernel
+    if kernel == 'sigmoid':
+        # Define the parameter grid for 'sigmoid' kernel
+        param_grid = {'C': [0.1, 1, 10, 100], 'gamma': [0.1, 1, 10]}
+
+        # Initialize GridSearchCV with the 'sigmoid' kernel and parameter grid
+        svm_model = SVC(kernel=kernel)
+        grid_search = GridSearchCV(svm_model, param_grid, cv=5, scoring='accuracy')
+        grid_search.fit(X_train_iris, y_train_iris)
+
+        # Best model from GridSearchCV
+        best_svm_model = grid_search.best_estimator_
+        print(f"Best hyperparameters for sigmoid kernel: {grid_search.best_params_}")
+    else:
+        # For other kernels, no hyperparameter tuning
+        best_svm_model = SVC(kernel=kernel)
+        best_svm_model.fit(X_train_iris, y_train_iris)
+
+    # Predict on the test set
+    y_pred_iris = best_svm_model.predict(X_test_iris)
+
+    # Calculate accuracy
+    accuracy = accuracy_score(y_test_iris, y_pred_iris) * 100  # Convert to percentage
+    print(f'Accuracy with kernel={kernel}: {accuracy:.2f}%')
+
+
+
+# Import required libraries
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score
+from sklearn.datasets import fetch_openml
+
+# Load the Ionosphere dataset from OpenML
+ionosphere_data = fetch_openml(name='ionosphere', version=1)
+
+# Separate features and target variable
+X_ionosphere = ionosphere_data.data
+y_ionosphere = ionosphere_data.target.apply(lambda x: 1 if x == 'g' else 0).values  # Convert class to binary (1: good, 0: bad)
+
+# Split the data into 70% training and 30% testing
+X_train_ionosphere, X_test_ionosphere, y_train_ionosphere, y_test_ionosphere = train_test_split(X_ionosphere, y_ionosphere, test_size=0.3, random_state=42)
+
+# List of kernels to evaluate
+kernels = ['linear', 'poly', 'rbf', 'sigmoid']
+
+# Iterate through different kernels and train the SVM model
+for kernel in kernels:
+    # Initialize the SVM model with the current kernel
+    svm_model = SVC(kernel=kernel)
+
+    # Train the model on the training data
+    svm_model.fit(X_train_ionosphere, y_train_ionosphere)
+
+    # Predict on the test set
+    y_pred_ionosphere = svm_model.predict(X_test_ionosphere)
+
+    # Calculate accuracy
+    accuracy = accuracy_score(y_test_ionosphere, y_pred_ionosphere) * 100  # Convert to percentage
+    print(f'Accuracy with kernel={kernel} on Ionosphere dataset: {accuracy:.2f}%')
+
+#-------------------------------------------------------------------------------------------------------------------------
+
+**2) Train a SVM classifier on the modified iris dataset (dataset is provided in the post section).** **Use only the first three features.As part of the assignment train models with the following set of hyperparameters RBF-kernel, gamma = 0.5, one-vs-rest classifier, no-feature-normalization.**
+**Try C = 0.01, 1, 10. For the above set of hyperparameters, report the best classification accuracy.**
+**Use the first 100 points as the training data and the remaining 50 as test data.**
+
+import pandas as pd
+import numpy as np
+from sklearn.svm import SVC
+from sklearn.multiclass import OneVsRestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+from google.colab import files
+
+print("Please upload irisX.csv and irisY.csv")
+uploaded = files.upload()
+
+irisX = pd.read_csv("irisX.csv", header=None)
+irisY = pd.read_csv("irisY.csv", header=None)
+
+X = irisX.iloc[:, :3].values
+y = irisY.values.ravel()
+
+# Use the first 100 points for training and the remaining 50 for testing
+X_train = X[:100]
+X_test = X[50:]
+y_train = y[:100]
+y_test = y[50:]
+
+C_values = [0.01, 1, 10]
+
+for C in C_values:
+    model = OneVsRestClassifier(SVC(kernel='rbf', gamma=0.5, C=C))
+    model.fit(X_train, y_train)
+    y_pred = model.predict(X_test)
+    acc = accuracy_score(y_test, y_pred)
+    print(f"Accuracy with RBF Kernel (C = {C}): {acc:.2%}")
+
+# --- STEP 3: Train SVM with Polynomial Kernel (degree=3) ---
+poly_svc = SVC(kernel='poly', degree=3, C=1, gamma=0.1)
+poly_svc.fit(X_train, y_train)
+
+# Get support vectors
+support_vector_indices = poly_svc.support_
+
+# Identify which training samples are NOT support vectors
+all_indices = np.arange(len(X_train))
+non_support_vector_indices = np.setdiff1d(all_indices, support_vector_indices)
+
+print("\nIndices of Non-Support Vectors:")
+print(non_support_vector_indices)
+
+#----------------------------------------------------------------------------------------------------------------------------
+
+**3) Which of these is not a support vector when using a Support Vector Classifier with a polynomial kernel with degree = 3, C = 1, and gamma = 0.1?**
+
+
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.svm import SVC
+from sklearn.model_selection import train_test_split
+
+# Data points
+X = np.array([[1], [2], [4], [5], [6], [7], [9], [10]])  # Feature values
+y = np.array([1, 1, -1, -1, -1, -1, 1, 1])              # Labels
+
+# Fit SVM model with Polynomial kernel
+clf = SVC(kernel='poly', degree=3, C=1, gamma=0.1)
+clf.fit(X, y)
+
+# Support Vectors
+print("Support Vectors:")
+print(clf.support_)
+
+# Visualizing the data
+plt.scatter(X, [0]*len(X), c=y, cmap='bwr', marker='o', label='Data Points')
+plt.scatter(X[clf.support_], [0]*len(clf.support_), facecolors='none', edgecolors='k', label='Support Vectors')
+plt.title("Support Vector Classifier")
+plt.xlabel("x")
+plt.legend()
+plt.show()
+
+
